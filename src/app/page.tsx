@@ -103,7 +103,7 @@ export default function CodeGenerator() {
         {/* Left panel - GIF Section */}
         <div className="w-1/5 flex flex-col">
           <div className="flex-1 p-2 border-l bg-white">
-            <img src="/giphy.gif" alt="Animated GIF" className="w-full h-auto" />
+            <img src="/giphy_1.gif" alt="Animated GIF" className="w-full h-auto" />
           </div>
         </div>
         
