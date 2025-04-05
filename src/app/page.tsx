@@ -31,7 +31,7 @@ The user may request for you to create a UI element like a button, you can creat
 You are expected to return the response in the following JSON format:
 {conversation: '', code: ''}
 
-make sure the return type is json and only the json code
+Make sure the return type is json and only the json code and the formatting follows standard HTML intenting style.
 
 
 The conversation in JSON object is the text explaining that you have created something the user does not expect
@@ -170,9 +170,10 @@ export default function CodeGenerator() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    setIsGenerating(true);
+    // Clear previous state first
     setMessage('');
     setGeneratedCode('');
+    setIsGenerating(true);
     
     try {
       setConversation(prev => [...prev, {
@@ -181,8 +182,15 @@ export default function CodeGenerator() {
       }]);
       
       await originalHandleSubmit(e);
+    } catch (error) {
+      console.error("Submission error:", error);
+      setConversation(prev => [...prev, {
+        role: "assistant", 
+        content: "Oops! Something went wrong with vibe coding..."
+      }]);
     } finally {
-      setIsGenerating(false);
+      // Let the message processing complete before clearing loading state
+      setTimeout(() => setIsGenerating(false), 500);
     }
   };
 
@@ -199,7 +207,7 @@ export default function CodeGenerator() {
         <div className="w-1/5 flex flex-col">
           <div className="flex-1 p-2 border-l bg-white">
             <Image 
-              src="/giphy.gif" 
+              src="/giphy_1.gif" 
               alt="Animated GIF" 
               width={500}
               height={500}
@@ -225,21 +233,12 @@ export default function CodeGenerator() {
               </Card>
             </TabsContent>
             <TabsContent value="preview" className="flex-1 overflow-auto p-4 bg-white" style={{ maxHeight: 'calc(100vh - 200px)' }}>
-              {isGenerating ? (
-                <div className="flex items-center justify-center h-full">
-                  <div className="flex flex-col items-center gap-2">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    <p className="text-sm text-muted-foreground">正在生成代码...</p>
-                  </div>
-                </div>
-              ) : (
-                <Preview code={generatedCode} />
-              )}
+              <Preview code={generatedCode} />
             </TabsContent>
           </Tabs>
         </div>
 
-        {/* RIght panel - Conversation history */}
+        {/* Right panel - Conversation history */}
         <div className="w-1/5 flex flex-col border-r">
           <div className="flex-1 overflow-y-auto p-4" style={{ maxHeight: 'calc(100vh - 200px)' }}>
             <h2 className="font-medium">Conversation History</h2>
@@ -279,7 +278,7 @@ export default function CodeGenerator() {
               }}
             />
             <Button type="submit" className="h-[60px] px-6" disabled={isGenerating || !input.trim()}>
-              {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Generate"}
+              Generate
             </Button>
           </div>
         </form>
