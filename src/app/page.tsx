@@ -112,17 +112,33 @@ p {
     conversationEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [conversation])
 
+  // Ensure consistent initial state
+  useEffect(() => {
+    // This effect runs only on the client side
+    if (typeof window !== 'undefined') {
+      // Any client-specific logic can go here
+    }
+  }, [])
+
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       {/* Header */}
       <header className="border-b p-4 bg-white">
-        <h1 className="text-xl font-semibold text-center">Code Generator UI</h1>
+        <h1 className="text-xl font-semibold text-center">Vibe Code</h1>
       </header>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-        {/* Left panel - Code and Preview */}
-        <div className="md:w-2/3 flex flex-col overflow-hidden border-r">
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left panel - GIF Section */}
+        <div className="w-1/5 flex flex-col">
+          <div className="flex-1 p-2 border-l bg-white">
+            <img src="/giphy.gif" alt="Animated GIF" className="w-full h-auto" />
+          </div>
+        </div>
+        
+
+        {/* Middle panel - Code and Preview */}
+        <div className="w-3/5 flex flex-col border-x">
           <Tabs defaultValue="code" className="flex-1 flex flex-col">
             <div className="border-b px-4">
               <TabsList className="h-12">
@@ -130,23 +146,21 @@ p {
                 <TabsTrigger value="preview">Preview</TabsTrigger>
               </TabsList>
             </div>
-            <TabsContent value="code" className="flex-1 overflow-auto p-4 bg-gray-50">
+            <TabsContent value="code" className="flex-1 overflow-auto p-4 bg-gray-50" style={{ maxHeight: 'calc(100vh - 200px)' }}>
               <Card className="h-full overflow-auto">
                 <CodeDisplay code={generatedCode} />
               </Card>
             </TabsContent>
-            <TabsContent value="preview" className="flex-1 overflow-auto p-4 bg-white">
+            <TabsContent value="preview" className="flex-1 overflow-auto p-4 bg-white" style={{ maxHeight: 'calc(100vh - 200px)' }}>
               <Preview code={generatedCode} />
             </TabsContent>
           </Tabs>
         </div>
 
-        {/* Right panel - Conversation history */}
-        <div className="md:w-1/3 flex-1 flex flex-col overflow-hidden">
-          <div className="p-2 border-b bg-white">
+        {/* RIght panel - Conversation history */}
+        <div className="w-1/5 flex flex-col border-r">
+          <div className="flex-1 overflow-y-auto p-4" style={{ maxHeight: 'calc(100vh - 200px)' }}>
             <h2 className="font-medium">Conversation History</h2>
-          </div>
-          <div className="flex-1 overflow-y-auto p-4">
             {conversation.map((message, index) => (
               <div key={index} className={`mb-4 ${message.role === "user" ? "text-right" : "text-left"}`}>
                 <div
@@ -161,6 +175,8 @@ p {
             <div ref={conversationEndRef} />
           </div>
         </div>
+
+        
       </div>
 
       {/* Input area */}
