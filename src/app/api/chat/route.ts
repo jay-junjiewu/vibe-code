@@ -12,7 +12,7 @@ export async function POST(req: Request) {
 
   // Call the language model
   const result = streamText({
-    model: groq('llama-3.1-8b-instant'),
+    model: groq('qwen-qwq-32b'),
     messages,
   });
 
