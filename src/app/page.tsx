@@ -11,93 +11,64 @@ import { Loader2 } from "lucide-react"
 import CodeDisplay from "@/components/code-display"
 import Preview from "@/components/preview"
 
+
+import { useChat } from '@ai-sdk/react';
+
+
+
+
 export default function CodeGenerator() {
-  const [input, setInput] = useState("")
+  // const [input, setInput] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
   const [conversation, setConversation] = useState<{ role: "user" | "assistant"; content: string }[]>([])
   const [generatedCode, setGeneratedCode] = useState("")
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const conversationEndRef = useRef<HTMLDivElement>(null)
+  const { messages, input, handleInputChange, handleSubmit } = useChat();
+
 
   // Mock code generation function (in a real app, this would call an API)
   const generateCode = async (prompt: string) => {
     setIsGenerating(true)
-
-    // Add user message to conversation
     setConversation((prev) => [...prev, { role: "user", content: prompt }])
 
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    try {
+        const response = await fetch('/api/groq', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ prompt }), // Send the prompt to the API
+        })
 
-    // Generate mock code based on prompt
-    let code = ""
-    if (prompt.toLowerCase().includes("button") && prompt.toLowerCase().includes("hover")) {
-      code = `<button class="custom-button">Hover Me</button>
+        if (!response.ok) {
+            throw new Error('Failed to generate code')
+        }
 
-<style>
-.custom-button {
-  background-color: #4CAF50;
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border-radius: 4px;
-}
-
-.custom-button:hover {
-  background-color: #45a049;
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-</style>`
-    } else {
-      code = `<div class="container">
-  <h1>Hello World</h1>
-  <p>This is a simple example based on your prompt: "${prompt}"</p>
-</div>
-
-<style>
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
-}
-h1 {
-  color: #333;
-}
-p {
-  line-height: 1.6;
-}
-</style>`
-    }
-
-    // Add assistant response to conversation (without code)
-    setConversation((prev) => [
-      ...prev,
-      {
-        role: "assistant",
-        content: `I've generated the code based on your request. You can see it in the code panel and preview.`,
-      },
-    ])
-
-    setGeneratedCode(code)
-    setIsGenerating(false)
-    setInput("")
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (input.trim() && !isGenerating) {
-      generateCode(input.trim())
+        const data = await response.json()
+        setGeneratedCode(data.message) // Set the generated code from the response
+        setConversation((prev) => [
+            ...prev,
+            { role: "assistant", content: data.message },
+        ])
+    } catch (error) {
+        console.error(error)
+        setConversation((prev) => [
+            ...prev,
+            { role: "assistant", content: "Error generating code." },
+        ])
+    } finally {
+        setIsGenerating(false)
+        // setInput("")
     }
   }
+
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault()
+  //   if (input.trim() && !isGenerating) {
+  //     generateCode(input.trim())
+  //   }
+  // }
 
   // Auto-resize textarea
   useEffect(() => {
@@ -186,7 +157,7 @@ p {
             <Textarea
               ref={textareaRef}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={handleInputChange}
               placeholder="Generate a button with hover effect..."
               className="flex-1 min-h-[60px] max-h-[200px] resize-none"
               onKeyDown={(e) => {
