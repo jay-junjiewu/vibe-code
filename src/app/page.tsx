@@ -194,93 +194,101 @@ export default function CodeGenerator() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50 overflow-hidden">
       {/* Header */}
-      <header className="border-b p-4 bg-white">
-        <h1 className="text-xl font-semibold text-center">Vibe Code</h1>
+      <header className="bg-gray-50 border-b px-4 py-3 h-14">
+        <h1 className="text-lg font-semibold text-gray-700">Vibe Kode</h1>
       </header>
 
       {/* Main content */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden" style={{height: 'calc(100vh - 7rem)'}}>
         {/* Left panel - GIF Section */}
-        <div className="w-1/5 flex flex-col">
-          <div className="flex-1 p-2 border-l bg-white">
+        <div className="w-1/5 bg-white border-r">
+          <div className="h-full p-2">
             <Image 
               src="/giphy_1.gif" 
               alt="Animated GIF" 
               width={500}
               height={500}
-              className="w-full h-auto"
+              className="w-full h-auto rounded-md"
               priority
             />
           </div>
         </div>
         
-
         {/* Middle panel - Code and Preview */}
-        <div className="w-3/5 flex flex-col border-x">
-          <Tabs defaultValue="code" className="flex-1 flex flex-col">
-            <div className="border-b px-4">
-              <TabsList className="h-12">
-                <TabsTrigger value="code">Code</TabsTrigger>
-                <TabsTrigger value="preview">Preview</TabsTrigger>
+        <div className="w-3/5 border-x flex flex-col">
+          <Tabs defaultValue="code" className="h-full flex flex-col">
+            <div className="px-4 pt-3 bg-gray-50 border-b">
+              <TabsList className="h-10 bg-gray-100 rounded-md">
+                <TabsTrigger value="code" className="rounded-sm">Code</TabsTrigger>
+                <TabsTrigger value="preview" className="rounded-sm">Preview</TabsTrigger>
               </TabsList>
             </div>
-            <TabsContent value="code" className="flex-1 overflow-auto p-4 bg-gray-50" style={{ maxHeight: 'calc(100vh - 200px)' }}>
-              <Card className="h-full overflow-auto">
-                <CodeDisplay code={message} />
-              </Card>
-            </TabsContent>
-            <TabsContent value="preview" className="flex-1 overflow-auto p-4 bg-white" style={{ maxHeight: 'calc(100vh - 200px)' }}>
-              <Preview code={generatedCode} />
-            </TabsContent>
+            
+            {/* Scrollable content area */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <div className="flex-1 overflow-auto">
+                <TabsContent value="code" className="h-full p-4 bg-white">
+                  <Card className="h-full rounded-sm">
+                    <CodeDisplay code={message} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="preview" className="h-full p-4 bg-white">
+                  <Preview code={generatedCode} />
+                </TabsContent>
+              </div>
+
+              {/* Input area at bottom of content */}
+              <div className="bg-white border-t p-4">
+                <form onSubmit={handleSubmit} className="max-w-5xl mx-auto">
+                  <div className="flex items-center gap-2">
+                    <Textarea
+                      ref={textareaRef}
+                      value={input}
+                      onChange={handleInputChange}
+                      placeholder="Describe your UI element..."
+                      className="flex-1 h-10 min-h-[40px] rounded-sm resize-none"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault()
+                          handleSubmit(e)
+                        }
+                      }}
+                    />
+                    <Button 
+                      type="submit" 
+                      className="h-10 px-6 rounded-sm"
+                      disabled={isGenerating || !input.trim()}
+                    >
+                      Generate
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </div>
           </Tabs>
         </div>
 
         {/* Right panel - Conversation history */}
-        <div className="w-1/5 flex flex-col border-r">
-          <div className="flex-1 overflow-y-auto p-4" style={{ maxHeight: 'calc(100vh - 200px)' }}>
-            <h2 className="font-medium">Conversation History</h2>
+        <div className="w-1/5 bg-white border-l">
+          <div className="h-full overflow-y-auto p-4">
+            <h2 className="font-medium text-sm text-gray-600 mb-3">Chat History</h2>
             {conversation.map((message, index) => (
-              <div key={index} className={`mb-4 ${message.role === "user" ? "text-right" : "text-left"}`}>
+              <div key={index} className={`mb-2 flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div
-                  className={`inline-block max-w-[90%] p-3 rounded-lg ${
-                    message.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
+                  className={`max-w-[90%] p-2 rounded-md text-sm text-left ${
+                    message.role === "user" 
+                      ? "bg-blue-50 text-blue-800" 
+                      : "bg-gray-50 text-gray-700"
                   }`}
                 >
-                  <p className="whitespace-pre-wrap">{message.content}</p>
+                  <p className="whitespace-pre-wrap leading-snug">{message.content}</p>
                 </div>
               </div>
             ))}
-            <div ref={conversationEndRef} />
           </div>
         </div>
-
-        
-      </div>
-
-      {/* Input area */}
-      <div className="border-t p-4 bg-white">
-        <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
-          <div className="flex items-end gap-2">
-            <Textarea
-              ref={textareaRef}
-              value={input}
-              onChange={handleInputChange}
-              placeholder="Generate a button with hover effect..."
-              className="flex-1 min-h-[60px] max-h-[200px] resize-none"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault()
-                  handleSubmit(e)
-                }
-              }}
-            />
-            <Button type="submit" className="h-[60px] px-6" disabled={isGenerating || !input.trim()}>
-              Generate
-            </Button>
-          </div>
-        </form>
       </div>
     </div>
   )
