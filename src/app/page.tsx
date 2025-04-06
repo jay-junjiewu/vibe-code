@@ -11,6 +11,7 @@ import CodeDisplay from "@/components/code-display"
 import Preview from "@/components/preview"
 import Image from "next/image"
 import { useChat } from '@ai-sdk/react';
+import { Volume2 } from 'lucide-react';
 
 const SYSTEM_PROMPT = `
 Your primary responsibility is to generate HTML code with embedded CSS and JavaScript.
@@ -61,6 +62,8 @@ export default function CodeGenerator() {
   const prevMessagesLengthRef = useRef(0);
   const lastContentRef = useRef('');
   const processingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isReading, setIsReading] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -193,109 +196,185 @@ export default function CodeGenerator() {
     }
   };
 
+  const handleReadCode = async () => {
+    if (!message || isReading) return;
+    
+    if (!window.speechSynthesis) {
+      console.error('Speech synthesis not supported');
+      alert('Your browser does not support speech synthesis');
+      return;
+    }
+
+    try {
+      setIsReading(true);
+      window.speechSynthesis.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(message);
+      utterance.lang = 'en-US';
+      utterance.rate = 1.2;
+      utterance.pitch = 1.2;
+      
+      utterance.onstart = () => {
+        console.log('Started speaking');
+      };
+      
+      utterance.onend = () => {
+        console.log('Finished speaking');
+        setIsReading(false);
+      };
+      
+      utterance.onerror = (event) => {
+        console.error('Speech synthesis error:', event);
+        setIsReading(false);
+        alert('Speech synthesis error, please try again');
+      };
+
+      utterance.onpause = () => {
+        console.log('Speech paused');
+      };
+
+      utterance.onresume = () => {
+        console.log('Speech resumed');
+      };
+      
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+      }
+      
+      window.speechSynthesis.speak(utterance);
+      
+      setTimeout(() => {
+        if (isReading) {
+          console.error('Speech synthesis timeout');
+          setIsReading(false);
+          window.speechSynthesis.cancel();
+          alert('Speech synthesis timeout, please try again');
+        }
+      }, 5000);
+
+    } catch (error) {
+      console.error('Error reading code:', error);
+      setIsReading(false);
+      alert('Speech synthesis error, please try again');
+    }
+  };
+
   return (
-      <div className="flex flex-col min-h-screen bg-gray-50 overflow-hidden">
-        {/* Header */}
-        <header className="bg-gray-50 border-b px-4 py-3 h-14 flex items-center justify-center">
-          <h1 style={{fontSize: "20px"}}
-              className="text-lg font-semibold text-gray-700 text-center whitespace-nowrap overflow-x-auto">
-            <span style={{fontSize: "30px"}}>😀 😢 😉 😮 😎 😠 😛 😭 😐</span> <strong>(^_^) Vibe Kode (^_^)</strong> <span style={{fontSize: "30px"}}> 😇 😍 🤔 🤑 🤐 😴 🥳 🤯 🤒 🤓</span>
-          </h1>
-        </header>
+    <div className="flex flex-col min-h-screen bg-gray-50 overflow-hidden">
+      {/* Header */}
+      <header className="bg-gray-50 border-b px-4 py-3 h-14 flex items-center justify-center">
+        <h1 style={{fontSize: "20px"}}
+            className="text-lg font-semibold text-gray-700 text-center whitespace-nowrap overflow-x-auto">
+          <span style={{fontSize: "30px"}}>😀 😢 😉 😮 😎 😠 😛 😭 😐</span> <strong>(^_^) Vibe Kode (^_^)</strong> <span style={{fontSize: "30px"}}> 😇 😍 🤔 🤑 🤐 😴 🥳 🤯 🤒 🤓</span>
+        </h1>
+      </header>
 
-        {/* Main content */}
-        <div className="flex flex-1 overflow-hidden" style={{height: 'calc(100vh - 7rem)'}}>
-          {/* Left panel - GIF Section */}
-          <div className="w-1/5 bg-white border-r">
-            <div className="h-full p-2">
-              <Image
-                  src="/giphy_1.gif"
-                  alt="Animated GIF"
-                  width={500}
-                  height={500}
-                  className="w-full h-auto rounded-md"
-                  priority
-              />
-            </div>
+      {/* Main content */}
+      <div className="flex flex-1 overflow-hidden" style={{height: 'calc(100vh - 7rem)'}}>
+        {/* Left panel - GIF Section */}
+        <div className="w-1/5 bg-white border-r">
+          <div className="fixed w-[calc((100vw-60%)/2)] p-2">
+            <Image 
+              src="/giphy_1.gif" 
+              alt="Animated GIF" 
+              width={500}
+              height={500}
+              className="w-full h-auto rounded-md"
+              priority
+            />
           </div>
+        </div>
 
-          {/* Middle panel - Code and Preview */}
-          <div className="w-3/5 border-x flex flex-col">
-            <Tabs defaultValue="code" className="h-full flex flex-col">
-              <div className="px-4 pt-3 bg-gray-50 border-b">
-                <TabsList className="h-10 bg-gray-100 rounded-md">
-                  <TabsTrigger value="code" className="rounded-sm">Code</TabsTrigger>
-                  <TabsTrigger value="preview" className="rounded-sm">Preview</TabsTrigger>
-                </TabsList>
-              </div>
+        {/* Middle panel - Code and Preview */}
+        <div className="w-3/5 border-x flex flex-col">
+          <Tabs defaultValue="code" className="h-full flex flex-col">
+            <div className="px-4 pt-3 bg-gray-50 border-b">
+              <TabsList className="h-10 bg-gray-100 rounded-md">
+                <TabsTrigger value="code" className="rounded-sm">Code</TabsTrigger>
+                <TabsTrigger value="preview" className="rounded-sm">Preview</TabsTrigger>
+              </TabsList>
+            </div>
 
-              {/* Scrollable content area */}
-              <div className="flex-1 flex flex-col overflow-hidden">
-                <div className="flex-1 overflow-auto">
-                  <TabsContent value="code" className="h-full p-4 bg-white">
-                    <Card className="h-full rounded-sm">
-                      <CodeDisplay code={message}/>
-                    </Card>
-                  </TabsContent>
-                  <TabsContent value="preview" className="h-full p-4 bg-white">
-                    <Preview code={generatedCode}/>
-                  </TabsContent>
-                </div>
-
-                {/* Input area at bottom of content */}
-                <div className="bg-white border-t p-4">
-                  <form onSubmit={handleSubmit} className="max-w-5xl mx-auto">
-                    <div className="flex items-center gap-2">
-                      <Textarea
-                          ref={textareaRef}
-                          value={input}
-                          onChange={handleInputChange}
-                          placeholder="Describe your UI VIBE today &#128540;"
-                          className="flex-1 h-10 min-h-[40px] rounded-sm resize-none"
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" && !e.shiftKey) {
-                              e.preventDefault()
-                              handleSubmit(e)
-                            }
-                          }}
-                      />
+            {/* Scrollable content area */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <div className="flex-1 overflow-auto">
+                <TabsContent value="code" className="h-full p-4 bg-white">
+                  <Card className="h-full rounded-sm">
+                    <div className="flex justify-end p-2 border-b">
                       <Button
-                          type="submit"
-                          className="h-10 px-6 rounded-sm"
-                          disabled={isGenerating || !input.trim()}
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleReadCode}
+                        disabled={!message || isReading}
+                        className="flex items-center gap-2"
                       >
-                        <span style={{fontSize: "20px"}}>Generate your vibe <span
-                            style={{fontSize: "40px"}}>&#128572;</span></span>
+                        <Volume2 className={`h-4 w-4 ${isReading ? 'animate-pulse' : ''}`} />
+                        {isReading ? 'Reading...' : 'Read it'}
                       </Button>
                     </div>
-                  </form>
+                    <CodeDisplay code={message || ''} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="preview" className="h-full p-4 bg-white">
+                  <Preview code={generatedCode} />
+                </TabsContent>
+              </div>
+
+              {/* Input area at bottom of content */}
+              <div className="bg-white border-t p-4">
+                <form onSubmit={handleSubmit} className="max-w-5xl mx-auto">
+                  <div className="flex items-center gap-2">
+                    <Textarea
+                      ref={textareaRef}
+                      value={input}
+                      onChange={handleInputChange}
+                      placeholder="Describe your UI VIBE today 😜"
+                      className="flex-1 h-10 min-h-[40px] rounded-sm resize-none"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault()
+                          handleSubmit(e)
+                        }
+                      }}
+                    />
+                    <Button 
+                      type="submit" 
+                      className="h-10 px-6 rounded-sm"
+                      disabled={isGenerating || !input.trim()}
+                    >
+                      <span style={{fontSize: "20px"}}>Generate your vibe <span style={{fontSize: "40px"}}>🐈</span></span>
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </Tabs>
+        </div>
+
+        {/* Right panel - Conversation history */}
+        <div className="w-1/5 bg-white border-l">
+          <div className="h-full overflow-y-auto p-4">
+            <h2 className="font-medium text-sm text-gray-600 mb-3">
+              <span style={{fontSize: "30px"}}> Chat History 🐱 </span>
+            </h2>
+            {conversation.map((message, index) => (
+              <div key={index} className={`mb-2 flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+                <div
+                  className={`max-w-[90%] p-2 rounded-md text-sm text-left ${
+                    message.role === "user" 
+                      ? "bg-blue-50 text-blue-800" 
+                      : "bg-gray-50 text-gray-700"
+                  }`}
+                >
+                  <p className="whitespace-pre-wrap leading-snug">{message.content}</p>
                 </div>
               </div>
-            </Tabs>
-          </div>
-
-          {/* Right panel - Conversation history */}
-          <div className="w-1/5 bg-white border-l">
-            <div className="h-full overflow-y-auto p-4">
-              <h2 className="font-medium text-sm text-gray-600 mb-3"><span style={{fontSize: "30px"}}> Chat History &#128569; </span>
-              </h2>
-              {conversation.map((message, index) => (
-                  <div key={index} className={`mb-2 flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-                    <div
-                        className={`max-w-[90%] p-2 rounded-md text-sm text-left ${
-                            message.role === "user"
-                                ? "bg-blue-50 text-blue-800"
-                                : "bg-gray-50 text-gray-700"
-                        }`}
-                    >
-                      <p className="whitespace-pre-wrap leading-snug">{message.content}</p>
-                    </div>
-                  </div>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
       </div>
+      <audio ref={audioRef} className="hidden" />
+    </div>
   )
 }
 
