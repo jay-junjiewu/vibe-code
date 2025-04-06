@@ -265,7 +265,7 @@ export default function CodeGenerator() {
       <header className="bg-gray-50 border-b px-4 py-3 h-14 flex items-center justify-center">
         <h1 style={{fontSize: "20px"}}
             className="text-lg font-semibold text-gray-700 text-center whitespace-nowrap overflow-x-auto">
-          <span style={{fontSize: "30px"}}>😀 😢 😉 😮 😎 😠 😛 😭 😐</span> <strong>(^_^) Vibe Kode (^_^)</strong> <span style={{fontSize: "30px"}}> 😇 😍 🤔 🤑 🤐 😴 🥳 🤯 🤒 🤓</span>
+          <span style={{fontSize: "25px"}}>😀 😢 😉༼☉ɷ⊙༽ 😮 😎 😠 😛 😭 😐</span> <strong>(^_^) Vibe Kode (^_^)</strong> <span style={{fontSize: "25px"}}> 😇 😍 🤐╭∩╮（︶︿︶）╭∩╮ 😴 🥳 🤓</span>
         </h1>
       </header>
 
@@ -328,8 +328,8 @@ export default function CodeGenerator() {
                       ref={textareaRef}
                       value={input}
                       onChange={handleInputChange}
-                      placeholder="Describe your UI VIBE today 😜"
-                      className="flex-1 h-10 min-h-[40px] rounded-sm resize-none"
+                      placeholder="Enter your UI vibe ༼ つ ◕_◕ ༽つ "
+                      className="flex-1 h-10 rounded-sm resize-none"
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {
                           e.preventDefault()
@@ -339,10 +339,10 @@ export default function CodeGenerator() {
                     />
                     <Button 
                       type="submit" 
-                      className="h-10 px-6 rounded-sm"
+                      className="h-10 px-3 rounded-sm"
                       disabled={isGenerating || !input.trim()}
                     >
-                      <span style={{fontSize: "20px"}}>Generate your vibe <span style={{fontSize: "40px"}}>🐈</span></span>
+                      <span style={{fontSize: "15px"}}>Vibe <span style={{fontSize: "20px"}}>🐈</span></span>
                     </Button>
                   </div>
                 </form>
@@ -354,8 +354,8 @@ export default function CodeGenerator() {
         {/* Right panel - Conversation history */}
         <div className="w-1/5 bg-white border-l">
           <div className="h-full overflow-y-auto p-4">
-            <h2 className="font-medium text-sm text-gray-600 mb-3">
-              <span style={{fontSize: "30px"}}> Chat History 🐱 </span>
+            <h2 className="font-medium text-sm text-gray-600 mb-3"style={{ textAlign: "center" }}>
+              <span style={{fontSize: "17px"}}> Chat History 🐱 </span>
             </h2>
             {conversation.map((message, index) => (
               <div key={index} className={`mb-2 flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
