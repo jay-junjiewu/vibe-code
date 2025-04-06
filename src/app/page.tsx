@@ -265,7 +265,7 @@ export default function CodeGenerator() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 overflow-hidden">
       {/* Header */}
-      <header className="bg-gray-50 border-b px-4 py-3 h-14 flex items-center justify-center">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-gray-50 border-b px-4 py-3 h-14 flex items-center justify-center">
         <h1 style={{fontSize: "20px"}}
             className="text-lg font-semibold text-gray-700 text-center whitespace-nowrap overflow-x-auto">
           <span style={{fontSize: "25px"}}>😀 😢 😉༼☉ɷ⊙༽ 😮 😎 😠 😛 😭 😐</span> <strong>(^_^) Vibe Kode (^_^)</strong> <span style={{fontSize: "25px"}}> 😇 😍 🤐╭∩╮（︶︿︶）╭∩╮ 😴 🥳 🤓</span>
@@ -273,7 +273,7 @@ export default function CodeGenerator() {
       </header>
 
       {/* Main content */}
-      <div className="flex flex-1 overflow-hidden" style={{height: 'calc(100vh - 7rem)'}}>
+      <div className="flex flex-1 overflow-hidden mt-14 mb-20" style={{height: 'calc(100vh - 3.5rem)'}}>
         {/* Left panel - GIF Section */}
         <div className="w-1/5 bg-white border-r">
           <div className="fixed w-[calc((100vw-60%)/2)] p-2">
@@ -300,7 +300,7 @@ export default function CodeGenerator() {
 
             {/* Scrollable content area */}
             <div className="flex-1 flex flex-col overflow-hidden">
-              <div className="flex-1 overflow-auto">
+              <div className="flex-1 overflow-hidden">
                 <TabsContent value="code" className="h-full p-4 bg-white">
                   <Card className="h-full rounded-sm">
                     <div className="flex justify-end p-2 border-b">
@@ -324,7 +324,7 @@ export default function CodeGenerator() {
               </div>
 
               {/* Input area at bottom of content */}
-              <div className="bg-white border-t p-4">
+              <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t p-4">
                 <form onSubmit={handleSubmit} className="max-w-5xl mx-auto">
                   <div className="flex items-center gap-2">
                     <Textarea
@@ -356,7 +356,7 @@ export default function CodeGenerator() {
 
         {/* Right panel - Conversation history */}
         <div className="w-1/5 bg-white border-l">
-          <div className="h-full overflow-y-auto p-4">
+          <div className="h-full overflow-y-hidden p-4 pb-20">
             <h2 className="font-medium text-sm text-gray-600 mb-3"style={{ textAlign: "center" }}>
               <span style={{fontSize: "17px"}}> Chat History 🐱 </span>
             </h2>
