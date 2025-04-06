@@ -31,7 +31,6 @@ export default function CodeDisplay({ code }: CodeDisplayProps) {
       if (!buttonRef.current || !containerRef.current) return
 
       const containerRect = containerRef.current.getBoundingClientRect()
-      const buttonRect = buttonRef.current.getBoundingClientRect()
 
       // Calculate center points relative to the button's original position
       const centerX = containerRect.right - 16 // 16 is half of button width (32px)
