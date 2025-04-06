@@ -1,10 +1,13 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Check, Copy } from "lucide-react"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism"
+
+const MIN_DISTANCE = 100; // Distance in pixels that triggers button escape
+const BUTTON_RADIUS = 50; // Radius of the circular escape path
 
 interface CodeDisplayProps {
   code: string
@@ -12,7 +15,10 @@ interface CodeDisplayProps {
 
 export default function CodeDisplay({ code }: CodeDisplayProps) {
   const [copied, setCopied] = useState(false)
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [isEscaping, setIsEscaping] = useState(false)
+  const [buttonPosition, setButtonPosition] = useState({ x: 0, y: 0 })
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(code)
@@ -66,14 +72,20 @@ export default function CodeDisplay({ code }: CodeDisplayProps) {
   }, [])
 
   return (
-    <div className="relative w-full h-full">
-      <div className="absolute right-2 top-2">
+    <div ref={containerRef} className="relative w-full h-full">
+      <div 
+        className="absolute right-2 top-2"
+        style={{
+          transform: `translate(${buttonPosition.x}px, ${buttonPosition.y}px)`,
+          transition: isEscaping ? 'transform 0.1s ease-out' : 'transform 0.3s ease-in'
+        }}
+      >
         <Button 
           ref={buttonRef}
           variant="outline" 
           size="sm" 
           onClick={copyToClipboard} 
-          className="h-8 w-8 p-0"
+          className="h-8 w-8 p-0 border-red-500 hover:bg-red-500/10 text-red-500 hover:text-red-600"
         >
           {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
         </Button>
