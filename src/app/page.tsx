@@ -260,7 +260,7 @@ export default function CodeGenerator() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-gray-50 border-b px-4 py-3 h-14 flex items-center justify-center">
         <h1 style={{fontSize: "20px"}}
             className="text-lg font-semibold text-gray-700 text-center whitespace-nowrap overflow-x-auto">
-          <span style={{fontSize: "25px"}}>😀 😢 😉༼☉ɷ⊙༽ 😮 😎 😠 😛 😭 😐</span> <strong>(^_^) Vibe Kode (^_^)</strong> <span style={{fontSize: "25px"}}> 😇 😍 🤐╭∩╮（︶︿︶）╭∩╮ 😴 🥳 🤓</span>
+          <span style={{fontSize: "18px"}}>😀 😢 😉༼☉ɷ⊙༽ 😮 😎 😠 😛 😭 😐</span> <span style={{fontSize: "25px"}}> (^_^) 𝕍𝕚𝕓𝕖 𝕂𝕠𝕕𝕖 (^_^)</span> <span style={{fontSize: "18px"}}> 😇 😍 🤐╭∩╮（︶︿︶）╭∩╮ 😴 🥳 🤓</span>
         </h1>
       </header>
 
