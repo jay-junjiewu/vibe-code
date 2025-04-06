@@ -263,9 +263,9 @@ export default function CodeGenerator() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 overflow-hidden">
+    <div className="flex flex-col min-h-screen bg-white overflow-hidden">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-gray-50 border-b px-4 py-3 h-14 flex items-center justify-center">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b px-4 py-3 h-14 flex items-center justify-center shadow-md" style={{ border: 'none', backgroundColor: 'white' }}>
         <h1 style={{fontSize: "20px"}}
             className="text-lg font-semibold text-gray-700 text-center whitespace-nowrap overflow-x-auto">
           <span style={{fontSize: "18px"}}>😀 😢 😉༼☉ɷ⊙༽ 😮 😎 😠 😛 😭 😐</span> <span style={{fontSize: "25px"}}> (^_^) 𝕍𝕚𝕓𝕖 𝕂𝕠𝕕𝕖 (^_^)</span> <span style={{fontSize: "18px"}}> 😇 😍 🤐╭∩╮（︶︿︶）╭∩╮ 😴 🥳 🤓</span>
@@ -273,10 +273,10 @@ export default function CodeGenerator() {
       </header>
 
       {/* Main content */}
-      <div className="flex flex-1 overflow-hidden mt-14 mb-20" style={{height: 'calc(100vh - 3.5rem)'}}>
+      <div className="flex flex-1 overflow-hidden mt-14 mb-20" style={{height: 'calc(100vh - 3.5rem)', backgroundColor: 'white'}}>
         {/* Left panel - GIF Section */}
         <div className="w-1/5 bg-white border-r">
-          <div className="fixed w-[calc((100vw-60%)/2)] p-2">
+          <div className="fixed w-[calc((100vw-60%)/2)] p-2" style={{ border: 'none'}}>
             <Image 
               src="/giphy_1.gif" 
               alt="Animated GIF" 
@@ -289,9 +289,9 @@ export default function CodeGenerator() {
         </div>
 
         {/* Middle panel - Code and Preview */}
-        <div className="w-3/5 border-x flex flex-col">
+        <div className="w-3/5 border-x flex flex-col" style={{ backgroundColor: 'white', border: 'none' }}>
           <Tabs defaultValue="code" className="h-full flex flex-col">
-            <div className="px-4 pt-3 bg-gray-50 border-b">
+            <div className="px-4 pt-3 bg-white border-b" style={{ border: 'none'}}>
               <TabsList className="h-10 bg-gray-100 rounded-md">
                 <TabsTrigger value="code" className="rounded-sm">Code</TabsTrigger>
                 <TabsTrigger value="preview" className="rounded-sm">Preview</TabsTrigger>
