@@ -1,14 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import Prism from "prismjs"
-import "prismjs/components/prism-markup"
-import "prismjs/components/prism-css"
-import "prismjs/components/prism-javascript"
-import "prismjs/themes/prism-tomorrow.css"
-import { Card, CardContent } from "@/components/ui/card"
+import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Check, Copy } from "lucide-react"
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
+import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism"
 
 interface CodeDisplayProps {
   code: string
@@ -16,10 +12,7 @@ interface CodeDisplayProps {
 
 export default function CodeDisplay({ code }: CodeDisplayProps) {
   const [copied, setCopied] = useState(false)
-
-  useEffect(() => {
-    Prism.highlightAll()
-  }, [code])
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(code)
@@ -28,18 +21,30 @@ export default function CodeDisplay({ code }: CodeDisplayProps) {
   }
 
   return (
-    <Card className="relative">
-      <div className="absolute top-2 right-2">
-        <Button variant="outline" size="sm" onClick={copyToClipboard} className="h-8 w-8 p-0">
+    <div className="relative w-full h-full">
+      <div className="absolute right-2 top-2">
+        <Button 
+          ref={buttonRef}
+          variant="outline" 
+          size="sm" 
+          onClick={copyToClipboard} 
+          className="h-8 w-8 p-0"
+        >
           {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
         </Button>
       </div>
-      <CardContent className="p-4 pt-8">
-        <pre className="language-markup overflow-auto max-h-[500px]">
-          <code>{code}</code>
-        </pre>
-      </CardContent>
-    </Card>
+      <SyntaxHighlighter
+        language="html"
+        style={vscDarkPlus}
+        customStyle={{
+          margin: 0,
+          padding: "1.5rem",
+          borderRadius: "0.5rem",
+        }}
+      >
+        {code}
+      </SyntaxHighlighter>
+    </div>
   )
 }
 

@@ -11,6 +11,7 @@ import CodeDisplay from "@/components/code-display"
 import Preview from "@/components/preview"
 import Image from "next/image"
 import { useChat } from '@ai-sdk/react';
+import { Volume2 } from 'lucide-react';
 
 const SYSTEM_PROMPT = `
 Your primary responsibility is to generate HTML code with embedded CSS and JavaScript.
@@ -61,6 +62,8 @@ export default function CodeGenerator() {
   const prevMessagesLengthRef = useRef(0);
   const lastContentRef = useRef('');
   const processingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isReading, setIsReading] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -193,8 +196,71 @@ export default function CodeGenerator() {
     }
   };
 
+  const handleReadCode = async () => {
+    if (!message || isReading) return;
+    
+    if (!window.speechSynthesis) {
+      console.error('Speech synthesis not supported');
+      alert('Your browser does not support speech synthesis');
+      return;
+    }
+
+    try {
+      setIsReading(true);
+      window.speechSynthesis.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(message);
+      utterance.lang = 'en-US';
+      utterance.rate = 1.2;
+      utterance.pitch = 1.2;
+      
+      utterance.onstart = () => {
+        console.log('Started speaking');
+      };
+      
+      utterance.onend = () => {
+        console.log('Finished speaking');
+        setIsReading(false);
+      };
+      
+      utterance.onerror = (event) => {
+        console.error('Speech synthesis error:', event);
+        setIsReading(false);
+        alert('Speech synthesis error, please try again');
+      };
+
+      utterance.onpause = () => {
+        console.log('Speech paused');
+      };
+
+      utterance.onresume = () => {
+        console.log('Speech resumed');
+      };
+      
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+      }
+      
+      window.speechSynthesis.speak(utterance);
+      
+      setTimeout(() => {
+        if (isReading) {
+          console.error('Speech synthesis timeout');
+          setIsReading(false);
+          window.speechSynthesis.cancel();
+          alert('Speech synthesis timeout, please try again');
+        }
+      }, 5000);
+
+    } catch (error) {
+      console.error('Error reading code:', error);
+      setIsReading(false);
+      alert('Speech synthesis error, please try again');
+    }
+  };
+
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 overflow-hidden">
+    <div className="flex flex-col min-h-screen bg-gray-50 overflow-hidden h-full">
       {/* Header */}
       <header className="bg-gray-50 border-b px-4 py-3 h-14">
         <h1 className="text-lg font-semibold text-gray-700">Vibe Kode</h1>
@@ -204,7 +270,7 @@ export default function CodeGenerator() {
       <div className="flex flex-1 overflow-hidden" style={{height: 'calc(100vh - 7rem)'}}>
         {/* Left panel - GIF Section */}
         <div className="w-1/5 bg-white border-r">
-          <div className="h-full p-2">
+          <div className="fixed w-[calc((100vw-60%)/2)] p-2">
             <Image 
               src="/giphy_1.gif" 
               alt="Animated GIF" 
@@ -227,15 +293,43 @@ export default function CodeGenerator() {
             </div>
             
             {/* Scrollable content area */}
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <div className="flex-1 overflow-auto">
-                <TabsContent value="code" className="h-full p-4 bg-white">
-                  <Card className="h-full rounded-sm">
-                    <CodeDisplay code={message} />
+            <div className="flex flex-col overflow-hidden">
+                <TabsContent value="code" className="h-full">
+                  <Card className="overflow-hidden rounded-none">
+                    <div className="flex justify-end p-2 border-b">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleReadCode}
+                        disabled={!message || isReading}
+                        className="flex items-center gap-2"
+                      >
+                        <Volume2 className={`h-4 w-4 ${isReading ? 'animate-pulse' : ''}`} />
+                        {isReading ? 'Reading...' : 'Read it'}
+                      </Button>
+                    </div>
+                  <div className="h-[calc(100vh-15rem)] overflow-auto">
+
+                    {message ? (
+                      <CodeDisplay code={message} />
+                    ) : (
+                      <div className="h-full flex items-center justify-center text-gray-400">
+                        <p>Code will be generated here</p>
+                      </div>
+                    )}
+                    </div>
                   </Card>
                 </TabsContent>
                 <TabsContent value="preview" className="h-full p-4 bg-white">
-                  <Preview code={generatedCode} />
+                  <div className="h-[calc(100vh-15rem)] overflow-auto">
+                    {generatedCode ? (
+                      <Preview code={generatedCode} />
+                    ) : (
+                      <div className="h-full flex items-center justify-center text-gray-400">
+                        <p>Preview will appear here</p>
+                      </div>
+                    )}
+                  </div>
                 </TabsContent>
               </div>
 
@@ -266,7 +360,6 @@ export default function CodeGenerator() {
                   </div>
                 </form>
               </div>
-            </div>
           </Tabs>
         </div>
 
@@ -290,6 +383,7 @@ export default function CodeGenerator() {
           </div>
         </div>
       </div>
+      <audio ref={audioRef} className="hidden" />
     </div>
   )
 }
