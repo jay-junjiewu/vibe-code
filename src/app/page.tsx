@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import CodeDisplay from "@/components/code-display"
 import Preview from "@/components/preview"
 import Image from "next/image"
@@ -50,7 +50,7 @@ export default function CodeGenerator() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [conversation, setConversation] = useState<{ role: "user" | "assistant"; content: string }[]>([])
   const [generatedCode, setGeneratedCode] = useState("")
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
   const conversationEndRef = useRef<HTMLDivElement>(null)
   const { messages, input, handleInputChange, handleSubmit: originalHandleSubmit } = useChat({
     initialMessages: [
@@ -150,14 +150,6 @@ export default function CodeGenerator() {
       }]);
     }
   };
-
-  // Auto-resize textarea
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto"
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
-    }
-  }, [input])
 
   // Scroll to bottom of conversation
   useEffect(() => {
@@ -327,14 +319,15 @@ export default function CodeGenerator() {
               <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t p-4">
                 <form onSubmit={handleSubmit} className="max-w-5xl mx-auto">
                   <div className="flex items-center gap-2">
-                    <Textarea
-                      ref={textareaRef}
+                    <Input
+                      ref={inputRef}
+                      type="text"
                       value={input}
                       onChange={handleInputChange}
                       placeholder="Enter your UI vibe ༼ つ ◕_◕ ༽つ "
-                      className="flex-1 h-10 rounded-sm resize-none"
+                      className="flex-1"
                       onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
+                        if (e.key === "Enter") {
                           e.preventDefault()
                           handleSubmit(e)
                         }
@@ -342,7 +335,7 @@ export default function CodeGenerator() {
                     />
                     <Button 
                       type="submit" 
-                      className="h-10 px-3 rounded-sm"
+                      className="h-10 px-2 rounded-sm"
                       disabled={isGenerating || !input.trim()}
                     >
                       <span style={{fontSize: "15px"}}>Vibe <span style={{fontSize: "20px"}}>🐈</span></span>
