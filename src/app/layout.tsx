@@ -2,8 +2,8 @@
    import '@/styles/globals.css'; // Import your global styles
 
    export const metadata = {
-     title: 'Vibe generator',
-     description: 'Your App Description',
+     title: 'Vibe Kode',
+     description: 'Vibe Kode: A Journey Through Emotions',
    };
 
    export default function RootLayout({ children }: { children: React.ReactNode }) {
