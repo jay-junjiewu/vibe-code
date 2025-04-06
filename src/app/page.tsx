@@ -260,10 +260,13 @@ export default function CodeGenerator() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 overflow-hidden h-full">
+    <div className="flex flex-col min-h-screen bg-gray-50 overflow-hidden">
       {/* Header */}
-      <header className="bg-gray-50 border-b px-4 py-3 h-14">
-        <h1 className="text-lg font-semibold text-gray-700">Vibe Kode</h1>
+      <header className="bg-gray-50 border-b px-4 py-3 h-14 flex items-center justify-center">
+        <h1 style={{fontSize: "20px"}}
+            className="text-lg font-semibold text-gray-700 text-center whitespace-nowrap overflow-x-auto">
+          <span style={{fontSize: "30px"}}>😀 😢 😉 😮 😎 😠 😛 😭 😐</span> <strong>(^_^) Vibe Kode (^_^)</strong> <span style={{fontSize: "30px"}}> 😇 😍 🤔 🤑 🤐 😴 🥳 🤯 🤒 🤓</span>
+        </h1>
       </header>
 
       {/* Main content */}
@@ -281,7 +284,7 @@ export default function CodeGenerator() {
             />
           </div>
         </div>
-        
+
         {/* Middle panel - Code and Preview */}
         <div className="w-3/5 border-x flex flex-col">
           <Tabs defaultValue="code" className="h-full flex flex-col">
@@ -291,11 +294,12 @@ export default function CodeGenerator() {
                 <TabsTrigger value="preview" className="rounded-sm">Preview</TabsTrigger>
               </TabsList>
             </div>
-            
+
             {/* Scrollable content area */}
-            <div className="flex flex-col overflow-hidden">
-                <TabsContent value="code" className="h-full">
-                  <Card className="overflow-hidden rounded-none">
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <div className="flex-1 overflow-auto">
+                <TabsContent value="code" className="h-full p-4 bg-white">
+                  <Card className="h-full rounded-sm">
                     <div className="flex justify-end p-2 border-b">
                       <Button
                         variant="ghost"
@@ -308,28 +312,11 @@ export default function CodeGenerator() {
                         {isReading ? 'Reading...' : 'Read it'}
                       </Button>
                     </div>
-                  <div className="h-[calc(100vh-15rem)] overflow-auto">
-
-                    {message ? (
-                      <CodeDisplay code={message} />
-                    ) : (
-                      <div className="h-full flex items-center justify-center text-gray-400">
-                        <p>Code will be generated here</p>
-                      </div>
-                    )}
-                    </div>
+                    <CodeDisplay code={message || ''} />
                   </Card>
                 </TabsContent>
                 <TabsContent value="preview" className="h-full p-4 bg-white">
-                  <div className="h-[calc(100vh-15rem)] overflow-auto">
-                    {generatedCode ? (
-                      <Preview code={generatedCode} />
-                    ) : (
-                      <div className="h-full flex items-center justify-center text-gray-400">
-                        <p>Preview will appear here</p>
-                      </div>
-                    )}
-                  </div>
+                  <Preview code={generatedCode} />
                 </TabsContent>
               </div>
 
@@ -341,7 +328,7 @@ export default function CodeGenerator() {
                       ref={textareaRef}
                       value={input}
                       onChange={handleInputChange}
-                      placeholder="Describe your UI element..."
+                      placeholder="Describe your UI VIBE today 😜"
                       className="flex-1 h-10 min-h-[40px] rounded-sm resize-none"
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {
@@ -355,18 +342,21 @@ export default function CodeGenerator() {
                       className="h-10 px-6 rounded-sm"
                       disabled={isGenerating || !input.trim()}
                     >
-                      Generate
+                      <span style={{fontSize: "20px"}}>Generate your vibe <span style={{fontSize: "40px"}}>🐈</span></span>
                     </Button>
                   </div>
                 </form>
               </div>
+            </div>
           </Tabs>
         </div>
 
         {/* Right panel - Conversation history */}
         <div className="w-1/5 bg-white border-l">
           <div className="h-full overflow-y-auto p-4">
-            <h2 className="font-medium text-sm text-gray-600 mb-3">Chat History</h2>
+            <h2 className="font-medium text-sm text-gray-600 mb-3">
+              <span style={{fontSize: "30px"}}> Chat History 🐱 </span>
+            </h2>
             {conversation.map((message, index) => (
               <div key={index} className={`mb-2 flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div

@@ -2,7 +2,7 @@
    import '@/styles/globals.css'; // Import your global styles
 
    export const metadata = {
-     title: 'Your App Title',
+     title: 'Vibe generator',
      description: 'Your App Description',
    };
 
