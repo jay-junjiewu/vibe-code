@@ -1,6 +1,6 @@
 # Vibe Kode
 
-Welcome to **[Vibe Kode](https://vibe-kode.app/)**, a fun and quirky web experience that flips the usual process of generating front-end elements on its head! Our project is dedicated to the recent trend of "Vibe Coding", where AI creates software entirely without the user checking the output beforehand.
+Welcome to **[Vibe Kode](https://vibe-kode.vercel.app/)**, a fun and quirky web experience that flips the usual process of generating front-end elements on its head! Our project is dedicated to the recent trend of "Vibe Coding", where AI creates software entirely without the user checking the output beforehand.
 
 ### 🛠️ **How It Works**
 The concept is simple, yet playful:  
@@ -13,7 +13,7 @@ Whether you want:
 - A smooth, responsive layout? We’ll throw in something intentionally unresponsive and chaotic.
 
 ### 🎬 **Live Website**
-Check it out in action here: [Vibe Kode](https://vibe-kode.app/)
+Check it out in action here: [Vibe Kode](https://vibe-kode.vercel.app/)
 
 Want to see **Vibe Kode** in action? Check out the chaos with these GIFs!
 ![gif2](https://github.com/user-attachments/assets/ca569e01-e5f2-41c9-843d-4263df0b5680)
